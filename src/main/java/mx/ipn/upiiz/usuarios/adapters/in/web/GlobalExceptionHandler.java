@@ -12,6 +12,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -48,6 +50,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> jsonInvalido(HttpMessageNotReadableException ex) {
         String msg = "Datos inválidos. Revisa que la fecha de nacimiento sea válida (aaaa-mm-dd).";
         return respuesta(HttpStatus.BAD_REQUEST, msg, List.of(msg));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> rutaNoEncontrada(NoResourceFoundException ex) {
+        String msg = "La ruta solicitada no existe.";
+        return respuesta(HttpStatus.NOT_FOUND, msg, List.of(msg));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> metodoNoPermitido(HttpRequestMethodNotSupportedException ex) {
+        String msg = "Método HTTP no permitido para esta ruta.";
+        return respuesta(HttpStatus.METHOD_NOT_ALLOWED, msg, List.of(msg));
     }
 
     @ExceptionHandler(Exception.class)
